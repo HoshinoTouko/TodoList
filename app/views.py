@@ -1,3 +1,4 @@
+import time
 import datetime
 from .models import TodoList
 from .serializers import TodoListSerializer
@@ -14,11 +15,12 @@ def get_all(request):
     serializer = TodoListSerializer(todo_list, many=True)
     return JSONResponse(serializer.data)
 
+
 @csrf_exempt
 def get_all_order_by_expire(request):
     def transDate(s):
         try:
-            return datetime.datetime.strptime(s)
+            return time.mktime(datetime.datetime.strptime(s, '%Y-%m-%d').timetuple())
         except Exception as e:
             return 0
     todo_list = TodoList.objects.all().order_by('id')
@@ -30,9 +32,11 @@ def get_all_order_by_expire(request):
     # return HttpResponse(str(tmp_data))
     data_after_order = sorted(
         tmp_data,
-        key=lambda x: transDate(x.get('expire'))
+        key=lambda x: transDate(x.get('expire')),
+        reverse=True
     )
     return JSONResponse(data_after_order)
+
 
 @csrf_exempt
 def get_all_order_by_priority(request):

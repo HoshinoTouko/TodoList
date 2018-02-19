@@ -71,7 +71,7 @@ class MainList extends React.Component {
         return (
             <Row id='main-content'>
                 <Col
-                    md={3} sm={12}
+                    msm={12}
                     style={{
                         textAlign: 'right',
                         marginTop: '50px'
@@ -82,7 +82,7 @@ class MainList extends React.Component {
                     />
                 </Col>
                 <Col
-                    md={9} sm={12}
+                    sm={12}
                     style={{
                         marginTop: '20px'
                     }}
@@ -99,8 +99,8 @@ class MainList extends React.Component {
                                     Text
                                 </p>
                             </th>
-                            <th>Status</th>
-                            <th>Create</th>
+                            <th><p>Status</p></th>
+                            <th><p>Create</p></th>
                             <th>
                                 <p
                                     onClick={() => {
@@ -119,7 +119,7 @@ class MainList extends React.Component {
                                     Priority
                                 </p>
                             </th>
-                            <th>Operation</th>
+                            <th><p>Operation</p></th>
                         </tr>
                         </thead>
                         <TbodyList
@@ -183,8 +183,14 @@ class TbodyList extends React.Component {
                         {dt.status === 1 ? 'Finish' : 'Not finish'}
                     </th>
                     <th>{dt.create}</th>
-                    <th>{dt.expire}</th>
-                    <th>{dt.priority}</th>
+                    <th>{dt.expire }</th>
+                    <th>
+                        {
+                            dt.priority === -1  &&  'Unimportant'   ||
+                            dt.priority === 0   &&  'Normal'        ||
+                            dt.priority === 1   &&  'Important'
+                        }
+                    </th>
                     <th style={{fontSize: 'large'}}>
                         <a onClick={() => {
                             this.changeStatus(dt.id, dt, rStatus)
