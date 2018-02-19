@@ -1,4 +1,4 @@
-import logging
+import datetime
 from .models import TodoList
 from .serializers import TodoListSerializer
 from django.http import HttpResponse
@@ -10,10 +10,33 @@ from rest_framework.parsers import JSONParser
 
 @csrf_exempt
 def get_all(request):
-    """
-    Show data
-    """
     todo_list = TodoList.objects.all().order_by('id')
+    serializer = TodoListSerializer(todo_list, many=True)
+    return JSONResponse(serializer.data)
+
+@csrf_exempt
+def get_all_order_by_expire(request):
+    def transDate(s):
+        try:
+            return datetime.datetime.strptime(s)
+        except Exception as e:
+            return 0
+    todo_list = TodoList.objects.all().order_by('id')
+    serializer = TodoListSerializer(todo_list, many=True)
+    tmp_data = list(map(
+        lambda x: dict(x.items()),
+        list(serializer.data)
+    ))
+    # return HttpResponse(str(tmp_data))
+    data_after_order = sorted(
+        tmp_data,
+        key=lambda x: transDate(x.get('expire'))
+    )
+    return JSONResponse(data_after_order)
+
+@csrf_exempt
+def get_all_order_by_priority(request):
+    todo_list = TodoList.objects.order_by('-priority')
     serializer = TodoListSerializer(todo_list, many=True)
     return JSONResponse(serializer.data)
 

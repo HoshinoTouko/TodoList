@@ -12,6 +12,8 @@ from . import views
 
 urlpatterns = [
     url(r'^(?P<list_id>[0-9]+)/$', views.todo_list_detail),
-    url('all/', views.get_all),
+    url('all/pri/', views.get_all_order_by_priority),
+    url('all/exp/', views.get_all_order_by_expire),
+    url('all/id/', views.get_all),
     url('add/', views.add),
 ]

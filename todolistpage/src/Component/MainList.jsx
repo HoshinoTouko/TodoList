@@ -12,7 +12,7 @@ import React from 'react';
 import Table from 'react-bootstrap/lib/Table';
 import reqwest from 'reqwest';
 
-import MdDone from'react-icons/lib/md/done';
+import MdDone from 'react-icons/lib/md/done';
 import MdClear from 'react-icons/lib/md/clear';
 import MdModeEdit from 'react-icons/lib/md/mode-edit';
 import MdDelete from 'react-icons/lib/md/delete';
@@ -22,19 +22,20 @@ import Row from "react-bootstrap/es/Row";
 import ModalEdit from "./ModalEdit";
 
 
-
-class MainList extends React.Component{
+class MainList extends React.Component {
     state = {
         data: [],
         editId: 0,
         editData: {},
-        editRefresh: () => {},
+        editRefresh: () => {
+        },
         editShow: false,
+        url: 'http://127.0.0.1:8000/api/all/id/',
     };
 
     fetch = () => {
         reqwest({
-            url: 'http://127.0.0.1:8000/api/all/',
+            url: this.state.url,
             method: 'get',
         }).then((data) => {
             // let data = JSON.parse(strData);
@@ -58,9 +59,16 @@ class MainList extends React.Component{
         this.fetch();
     };
 
-    render(){
+    render() {
+        const changeUrl = (url) => {
+            this.setState({
+                url: url,
+            }, () => {
+                this.fetch();
+            })
+        };
 
-        return(
+        return (
             <Row id='main-content'>
                 <Col
                     md={3} sm={12}
@@ -82,29 +90,58 @@ class MainList extends React.Component{
                     <Table responsive>
                         <thead>
                         <tr>
-                            <th>Text</th>
+                            <th>
+                                <p
+                                    onClick={() => {
+                                        changeUrl('http://127.0.0.1:8000/api/all/id/')
+                                    }}
+                                >
+                                    Text
+                                </p>
+                            </th>
                             <th>Status</th>
                             <th>Create</th>
-                            <th>Expire</th>
-                            <th>Priority</th>
+                            <th>
+                                <p
+                                    onClick={() => {
+                                        changeUrl('http://127.0.0.1:8000/api/all/exp/')
+                                    }}
+                                >
+                                    Expire
+                                </p>
+                            </th>
+                            <th>
+                                <p
+                                    onClick={() => {
+                                        changeUrl('http://127.0.0.1:8000/api/all/pri/')
+                                    }}
+                                >
+                                    Priority
+                                </p>
+                            </th>
                             <th>Operation</th>
                         </tr>
                         </thead>
                         <TbodyList
-                            data = {this.state.data}
-                            fetch = {() => this.fetch()}
-                            editTodoListById = {this.editTodoListById}
+                            data={this.state.data}
+                            fetch={this.fetch}
+                            editTodoListById={this.editTodoListById}
                         />
                     </Table>
                 </Col>
                 <Col sm={12}>
                     <ModalEdit
-                        show = {this.state.editShow}
-                        onShow = {() => {this.setState({ editShow: true });}}
-                        id = {this.state.editId}
-                        data = {this.state.editData}
-                        setRefresh = {func => this.setState({editRefresh: func})}
-                        onHide = {() => {this.setState({ editShow: false });}}
+                        show={this.state.editShow}
+                        onShow={() => {
+                            this.setState({editShow: true});
+                        }}
+                        id={this.state.editId}
+                        data={this.state.editData}
+                        setRefresh={func => this.setState({editRefresh: func})}
+                        onHide={() => {
+                            this.setState({editShow: false});
+                        }}
+                        fetch={this.fetch}
                     />
                 </Col>
             </Row>
@@ -112,7 +149,7 @@ class MainList extends React.Component{
     }
 }
 
-class TbodyList extends React.Component{
+class TbodyList extends React.Component {
 
     deleteById = (id) => {
         reqwest({
@@ -134,10 +171,10 @@ class TbodyList extends React.Component{
         });
     };
 
-    render(){
+    render() {
         const data = this.props.data;
         const dataElements = [];
-        for(let dt of data){
+        for (let dt of data) {
             const rStatus = dt.status === 1 ? 0 : 1;
             dataElements.push(
                 <tr key={dt.id}>
@@ -149,22 +186,28 @@ class TbodyList extends React.Component{
                     <th>{dt.expire}</th>
                     <th>{dt.priority}</th>
                     <th style={{fontSize: 'large'}}>
-                        <a onClick={() => {this.changeStatus(dt.id, dt, rStatus)}}>
+                        <a onClick={() => {
+                            this.changeStatus(dt.id, dt, rStatus)
+                        }}>
                             {rStatus === 1 ? <MdDone/> : <MdClear/>}
                         </a>{' '}
 
-                        <a onClick={() => {this.props.editTodoListById(dt.id, dt)}}>
+                        <a onClick={() => {
+                            this.props.editTodoListById(dt.id, dt)
+                        }}>
                             <MdModeEdit/>
                         </a>{' '}
 
-                        <a onClick={() => {this.deleteById(dt.id)}}>
+                        <a onClick={() => {
+                            this.deleteById(dt.id)
+                        }}>
                             <MdDelete/>
                         </a>
                     </th>
                 </tr>
             )
         }
-        return(
+        return (
             <tbody>{dataElements}</tbody>
         )
     }

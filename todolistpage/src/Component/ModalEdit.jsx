@@ -61,7 +61,7 @@ class ModalEdit extends React.Component {
     render() {
         const submit = () => {
             reqwest({
-                url: `http://127.0.0.1:8000/api/${this.props.id}`,
+                url: `http://127.0.0.1:8000/api/${this.props.id}/`,
                 method: 'put',
                 data: {
                     content: this.state.content,
