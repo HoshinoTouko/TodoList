@@ -2,6 +2,7 @@ import logging
 from .models import TodoList
 from .serializers import TodoListSerializer
 from django.http import HttpResponse
+from django.http import QueryDict
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
@@ -12,7 +13,7 @@ def get_all(request):
     """
     Show data
     """
-    todo_list = TodoList.objects.all()
+    todo_list = TodoList.objects.all().order_by('id')
     serializer = TodoListSerializer(todo_list, many=True)
     return JSONResponse(serializer.data)
 
@@ -31,12 +32,12 @@ def add(request):
 
 
 @csrf_exempt
-def todo_list_detail(request, id):
+def todo_list_detail(request, list_id):
     """
     Edit or delete.
     """
     try:
-        todo_list = TodoList.objects.get(id=id)
+        todo_list = TodoList.objects.get(id=list_id)
     except TodoList.DoesNotExist:
         return HttpResponse(status=404)
 
@@ -45,15 +46,11 @@ def todo_list_detail(request, id):
         return JSONResponse(serializer.data)
 
     elif request.method == 'PUT':
-        data = JSONParser().parse(request)
+        data = QueryDict(request.body)
         serializer = TodoListSerializer(todo_list, data=data)
         if serializer.is_valid():
-            try:
-                data['content']
-                serializer.save()
-                return JSONResponse(serializer.data)
-            except Exception as e:
-                print(e)
+            serializer.save()
+            return JSONResponse(serializer.data)
         return JSONResponse(serializer.errors, status=400)
 
     elif request.method == 'DELETE':

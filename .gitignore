@@ -1,3 +1,12 @@
+# dependencies
+todolistpage/node_modules
+
+# testing
+todolistpage/coverage
+
+# production
+todolistpage/build
+
 # idea
 .idea/
 

@@ -11,7 +11,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^(?P<id>[0-9]+)/$', views.todo_list_detail),
+    url(r'^(?P<list_id>[0-9]+)/$', views.todo_list_detail),
     url('all/', views.get_all),
     url('add/', views.add),
 ]

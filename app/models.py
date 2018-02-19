@@ -10,6 +10,9 @@ class TodoList(models.Model):
         default=datetime.datetime.now().strftime("%Y-%m-%d"),
         null=True
     )
-    expire = models.DateField(null=True)
-    status = models.BigIntegerField(null=True)
-    priority = models.BigIntegerField(null=True)
+    expire = models.DateField(
+        default=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
+        null=True
+    )
+    status = models.BigIntegerField(null=True, default=0)
+    priority = models.BigIntegerField(null=True, default=0)
